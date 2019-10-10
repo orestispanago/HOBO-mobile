@@ -7,6 +7,7 @@ import numpy as np
 import matplotlib.dates as mdates
 from windrose import WindroseAxes
 from matplotlib.ticker import FormatStrFormatter
+from matplotlib.ticker import StrMethodFormatter
 
 from pandas.plotting import register_matplotlib_converters
 register_matplotlib_converters()
@@ -130,7 +131,7 @@ def plot_temp_rh(df,temp='LT',rh='phi',letter=None, title=False):
     myFmt = mdates.DateFormatter('%H:%M')
     ax1.xaxis.set_major_formatter(myFmt)
     plt.savefig(f"{make_dir('Results/Plots/Lapup/')}{date}{letter[0]}.png",bbox_inches="tight")
-#plot_temp_rh(lapup_day,letter='a)',title=True)
+
 
 
 def plot_windrose(df,letter=None, title=False):
@@ -145,13 +146,14 @@ def plot_windrose(df,letter=None, title=False):
     ax = WindroseAxes.from_ax(fig=fig)
     if title:
         ax.set_title(date)
-#    ax.text(0, 0, 'c',fontsize=24, style='italic')
-    ax.bar(windf['wd'], windf['ws'], normed=False, opening=0.8, 
+    ax.bar(windf['wd'], windf['ws'], normed=True, opening=0.8, 
            edgecolor='black', bins=np.arange(0, 8, 1))
+    ax.set_yticks(np.arange(10, 60, step=10))
+    ax.set_yticklabels(np.arange(10, 60, step=10))
+    ax.yaxis.set_major_formatter(StrMethodFormatter(u"{x:.0f}%"))
     ax.legend(loc='center left', bbox_to_anchor=(1.05, 0.5), title='Wind speed (m/s)')
-    fig.tight_layout()
     plt.savefig(f"{make_dir('Results/Plots/Lapup/')}{date}{letter[0]}.png")
-#plot_windrose(lapup_day,letter='c)')
+
 
 days = glob.glob('Days/*/')
 lapup = read_lapup('Meteo_1min_2019_raw.zip')
